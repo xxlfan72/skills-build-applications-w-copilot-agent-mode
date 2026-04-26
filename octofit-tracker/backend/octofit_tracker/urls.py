@@ -1,10 +1,9 @@
-import os
 
+import os
 from django.contrib import admin
 from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework import routers
-
 from octofit_tracker.views import (
     ActivityViewSet,
     LeaderboardViewSet,
@@ -26,8 +25,13 @@ router.register(r'activities', ActivityViewSet, basename='activities')
 router.register(r'leaderboard', LeaderboardViewSet, basename='leaderboard')
 router.register(r'workouts', WorkoutViewSet, basename='workouts')
 
-
 def api_root(request):
+    # Always use the correct base_url for the current environment
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    if codespace_name:
+        base_url = f"https://{codespace_name}-8000.app.github.dev"
+    else:
+        base_url = 'http://localhost:8000'
     return JsonResponse(
         {
             'users': f'{base_url}/api/users/',
